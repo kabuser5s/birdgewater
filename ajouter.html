@@ -1,0 +1,772 @@
+    <!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Ubuntu', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .loader {
+            display: block;
+            --height-of-loader: 4px;
+            --loader-color: var(--color-primary);
+            width: 130px;
+            height: var(--height-of-loader);
+            border-radius: 30px;
+            background-color: rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .loader::before {
+            content: "";
+            position: absolute;
+            background: var(--loader-color);
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            border-radius: 30px;
+            animation: moving 1s ease-in-out infinite;
+            ;
+        }
+
+        @keyframes moving {
+            50% {
+                width: 100%;
+            }
+
+            100% {
+                width: 0;
+                right: 0;
+                left: unset;
+            }
+        }
+
+        .step-indicator {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .step-indicator::after {
+            display: none;
+        }
+
+        .step-indicator.active::after {
+            background: var(--color-primary);
+        }
+
+        .step-indicator.completed::after {
+            background: #10B981;
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 15px;
+            background: #E5E7EB;
+            color: #6B7280;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .step-indicator.active .step-number {
+            background: var(--color-primary);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 4px 16px rgba(0, 35, 90, 0.4);
+        }
+
+        .step-indicator.completed .step-number {
+            background: #10B981;
+            color: white;
+        }
+
+        .step-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #6B7280;
+            transition: all 0.3s ease;
+        }
+
+        .step-indicator.active .step-label {
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        .form-container {
+            animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .input-field {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid #E5E7EB;
+            padding: 14px 16px;
+        }
+
+        .input-field:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 4px rgba(0, 35, 90, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
+            outline: none;
+            transform: translateY(-1px);
+        }
+
+        .input-field:hover {
+            border-color: #CBD5E1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 50%, var(--color-primary) 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 16px rgba(0, 35, 90, 0.3);
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 35, 90, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        .card-shadow {
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        }
+
+        .error-icon {
+            animation: shake 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) rotate(0); }
+            20% { transform: translateX(-12px) rotate(-2deg); }
+            40% { transform: translateX(8px) rotate(1deg); }
+            60% { transform: translateX(-6px) rotate(-1deg); }
+            80% { transform: translateX(3px) rotate(0.5deg); }
+        }
+
+        .success-check {
+            animation: scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0) rotate(-45deg);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+            border-radius: 3px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--color-primary), transparent);
+            border-radius: 2px;
+        }
+
+        .highlight-text {
+            background: linear-gradient(135deg, rgba(0, 35, 90, 0.05) 0%, rgba(0, 35, 90, 0.02) 100%);
+            border-left: 4px solid var(--color-primary);
+        }
+
+        /* ✅ CORRECTION : S'assurer que les zones sont bien cachées au départ */
+        #zoneSucces,
+        #zoneEchec {
+            display: none !important;
+        }
+
+        #zoneSucces.visible,
+        #zoneEchec.visible {
+            display: block !important;
+        }
+    </style>
+
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="./settings.js"></script>
+    <script type="text/javascript">
+        // Initialisation EmailJS avec la Public Key définie dans settings.js
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof emailJSConfig !== 'undefined' && emailJSConfig.actif && typeof emailjs !== 'undefined') {
+                emailjs.init({ publicKey: emailJSConfig.publicKey });
+            }
+        });
+    </script>
+    <title>Virement</title>
+</head>
+
+<body>
+    <!-- Le watermark sera inséré dynamiquement par settings.js si nécessaire -->
+
+    <!-- PREMIERE ZONE DES HEADER -->
+    <div class="p-2 md:px-24 bg-white h-16 shadow-md md:shadow-none mb-0 fixed top-0 w-full z-50 md:border-1 md:border md:border-[#ccc] flex items-center justify-between">
+
+        <div class=" flex items-center">
+           <div class="w-[50px]">
+                <img src="/assets/bp-logo-small.svg" alt="">
+            </div>
+
+            <div class="font-semibold hidden md:flex w-[700px]">
+                <div class="mx-6 text-sm text-[var(--color-primary)] cursor-pointer hover:text-[var(--color-primary)]">
+                    <p>Compte et cartes</p>
+                </div>
+                <div class="mx-6 text-sm cursor-pointer hover:text-[var(--color-primary)]">
+                    <p>Emprunter</p>
+                </div>
+                <div class="mx-6 text-sm cursor-pointer hover:text-[var(--color-primary)]">
+                    <p>Epargner</p>
+                </div>
+                <div class="mx-6 text-sm cursor-pointer hover:text-[var(--color-primary)]">
+                    <p>Assurer</p>
+                </div>
+                <div class="mx-6 text-sm cursor-pointer hover:text-[var(--color-primary)]">
+                    <p>Nos conseils</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <!-- La zonne des logo de bpce -->
+            <div class="w-[200px] hidden md:block cursor-pointer">
+                <img src="/assets/bp.svg" alt="">
+            </div>
+
+            <!-- Lien de deconnexion -->
+            <a href="./index.html">
+            <div class="cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                </svg>
+            </div>
+            </a>
+           
+
+        </div>
+    </div>
+
+    <!-- DEUXIEME ZONE DES HEADER -->
+    <div class="flex w-full fixed mt-16 gap-8 border-b h-14 items-center md:justify-normal justify-center md:px-24 bg-white/95 backdrop-blur-sm z-40 text-sm">
+        <a href="./compte.html">
+            <div class="font-semibold text-gray-600 hover:text-[var(--color-primary)] cursor-pointer transition-colors px-2 py-4 relative group">
+                <p>Mes comptes</p>
+                <div class="border-b-2 w-full absolute bottom-0 left-0 border-blue-500 scale-x-0 group-hover:scale-x-100 transition-transform"></div>
+            </div>
+        </a>
+
+        <a href="./historique.html">
+            <div class="font-semibold text-gray-600 hover:text-[var(--color-primary)] cursor-pointer transition-colors px-2 py-4 relative group">
+                <p>Historique</p>
+                <div class="border-b-2 w-full absolute bottom-0 left-0 border-blue-500 scale-x-0 group-hover:scale-x-100 transition-transform"></div>
+            </div>
+        </a>
+        
+        <div class="font-semibold text-[var(--color-primary)] cursor-pointer px-2 py-4 relative">
+            <p>Virement</p>
+            <div class="border-b-2 w-full absolute bottom-0 left-0 border-blue-500"></div>
+        </div>
+    </div>
+
+    <!-- LA ZONE 2 -->
+    <div class="px-4 md:px-24 pt-36">
+        <div class="md:w-[700px] mx-auto">
+            <h1 class="text-xl md:text-2xl font-bold text-[var(--color-primary)] mb-2 text-center">Faire un virement</h1>
+            <p class="text-gray-600 text-sm text-center">Ajoutez un nouveau bénéficiaire et effectuez votre virement en toute sécurité</p>
+        </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="px-4 md:px-24 mt-6">
+        <div class="md:w-[700px] mx-auto">
+            <div class="flex items-center justify-between mb-6">
+                <div class="w-full">
+                    <div class="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
+                        <div id="progressBar" class="progress-bar" style="width: 33%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-between items-start">
+                <div class="step-indicator active flex-col gap-2 !items-center text-center" id="step1">
+                    <div class="step-number">1</div>
+                    <div class="step-label text-xs md:text-sm">Coordonnées</div>
+                </div>
+                <div class="step-indicator flex-col gap-2 !items-center text-center" id="step2">
+                    <div class="step-number">2</div>
+                    <div class="step-label text-xs md:text-sm">Informations</div>
+                </div>
+                <div class="step-indicator flex-col gap-2 !items-center text-center" id="step3">
+                    <div class="step-number">3</div>
+                    <div class="step-label text-xs md:text-sm">Confirmation</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LA ZONE 1 Ajouter Bénéficiaire -->
+    <div class="px-4 md:px-24 mt-8" id="zoneGo">
+        <div class="flex justify-center sm:pb-28 pb-12" id="zonePrincipal">
+            <div class="form-container pt-8 w-full mt-5 md:w-[700px] px-2 md:px-0">
+                <div class="bg-white rounded-2xl card-shadow p-4 md:p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: rgba(0, 35, 90, 0.1);">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" style="stroke: var(--color-primary);">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold" style="color: var(--color-primary);">Coordonnées bancaires</h3>
+                            <p class="text-xs text-gray-500">Étape 1/3</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Pays de la banque du bénéficiaire</label>
+                            <input class="input-field w-full h-12 rounded-lg bg-gray-50" type="text" id="country" placeholder="Ex: France" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">IBAN <span class="text-red-500">*</span></label>
+                            <input class="input-field w-full h-12 rounded-lg bg-gray-50" type="text" id="iban" placeholder="FR76 XXXX XXXX XXXX XXXX XXXX XXX" required>
+                            <p class="text-xs text-gray-500 mt-2">Format : Code pays + 25 caractères</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-center mt-8">
+                        <button id="action1" class="btn-primary px-10 py-3 rounded-xl text-white font-medium">Continuer →</button>
+                    </div>
+                </div>
+                
+                <div class="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-100">
+                    <div class="flex items-start gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" style="stroke: var(--color-primary);">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p class="text-sm" style="color: var(--color-primary);">Vérifiez bien les informations bancaires avant de continuer. Toute erreur pourrait entraîner des frais supplémentaires.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LA ZONE 2 Ajouter Bénéficiaire -->
+    <div class="px-4 md:px-24 mt-8 hidden" id="zone1">
+
+        <div class="flex justify-center sm:pb-28 pb-12">
+            <div class="form-container pt-8 w-full mt-5 md:w-[700px] px-2 md:px-0">
+                <div class="bg-white rounded-2xl card-shadow p-4 md:p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background-color: rgba(0, 35, 90, 0.1);">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" style="stroke: var(--color-primary);">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold" style="color: var(--color-primary);">Informations du bénéficiaire</h3>
+                            <p class="text-xs text-gray-500">Étape 2/3</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nom</label>
+                                <input class="input-field w-full h-12 rounded-lg bg-gray-50" type="text" id="name" placeholder="DUPONT" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Prénoms</label>
+                                <input class="input-field w-full h-12 rounded-lg bg-gray-50" type="text" id="prenom" placeholder="Jean" required>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Montant à envoyer <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <input class="input-field w-full h-12 rounded-lg bg-gray-50 pl-4 pr-16" type="text" id="montant" placeholder="0,00" required>
+                                <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium devise"></span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email de notification <span class="text-red-500">*</span></label>
+                            <input class="input-field w-full h-12 rounded-lg bg-gray-50" type="email" id="emailDestinataire" placeholder="exemple@email.com" required>
+                            <p class="text-xs text-gray-500 mt-2">L'email recevant la confirmation du virement</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-center mt-8">
+                        <button id="action2" class="btn-primary px-10 py-3 rounded-xl text-white font-medium">Continuer →</button>
+                    </div>
+                </div>
+                
+                <div class="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-100">
+                    <div class="flex items-start gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <p class="text-sm text-amber-800">Le virement sera exécuté instantanément. Vérifiez le montant avant de confirmer.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- LA ZONE 4 RECAPUTILATIF -->
+    <div class="px-4 md:px-24 mt-8 hidden" id="recaputilatif">
+
+        <div class="flex justify-center sm:pb-28 pb-12">
+            <div class="form-container pt-8 w-full mt-5 md:w-[700px] px-2 md:px-0">
+                <div class="bg-white rounded-2xl card-shadow overflow-hidden">
+                    <div class="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] p-6 text-white">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold">Récapitulatif du virement</h3>
+                                    <p class="text-xs text-white text-opacity-80">Étape 3/3 - Vérifiez avant de valider</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-8">
+                        <div class="space-y-6">
+                            <div class="info-card p-4 rounded-xl">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background-color: rgba(0, 35, 90, 0.1);">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" style="stroke: var(--color-primary);">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-500">Bénéficiaire</span>
+                                </div>
+                                <p class="text-xl font-semibold ml-11" style="color: var(--color-primary);"><span id="myName"></span> <span id="myLastName"></span></p>
+                            </div>
+                            
+                            <div class="info-card p-4 rounded-xl">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background-color: rgba(0, 35, 90, 0.1);">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" style="stroke: var(--color-primary);">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-500">IBAN</span>
+                                </div>
+                                <p class="text-lg font-medium text-gray-800 ml-11 tracking-wide"><span id="myRib"></span></p>
+                            </div>
+                            
+                            <div class="highlight-text p-5 rounded-xl">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background-color: var(--color-primary);">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-medium" style="color: var(--color-primary);">Montant du virement</span>
+                                </div>
+                                <p class="text-3xl font-bold ml-11" style="color: var(--color-primary);"><span id="myMontant"></span><span class="devise"></span></p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8">
+                            <button id="actionfinish" class="btn-primary w-full py-4 rounded-xl text-white font-semibold text-lg flex items-center justify-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                                Confirmer le virement
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LA ZONE Chargement  -->
+    <div class="px-4 md:px-24 mt-8 hidden" id="zoneChargement">
+
+        <div class="flex justify-center sm:pb-28 pb-12">
+            <div class="pt-8 w-full mt-5 md:w-[700px] px-2 md:px-0">
+                <div class="bg-white rounded-2xl card-shadow p-8 md:p-12 text-center">
+                    <div class="mb-8">
+                        <div class="sm:w-[120px] w-[80px] mx-auto justify-center items-center flex mb-6">
+                            <img src="/assets/bp-logo-small.svg" width="120" alt="">
+                        </div>
+                        <div class="loader mx-auto"></div>
+                    </div>
+                    <h3 class="text-xl font-semibold text-[var(--color-primary)] mb-2">Traitement en cours</h3>
+                    <p class="text-gray-600">Votre virement est en cours de validation...</p>
+                    <div class="mt-8 flex justify-center gap-2">
+                        <div class="w-2 h-2 bg-[var(--color-primary)] rounded-full animate-bounce" style="animation-delay: 0s"></div>
+                        <div class="w-2 h-2 bg-[var(--color-primary)] rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                        <div class="w-2 h-2 bg-[var(--color-primary)] rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LA ZONE SUCCÈS -->
+    <div class="px-4 md:px-24 mt-8" id="zoneSucces">
+        <div class="flex justify-center sm:pb-28 pb-12">
+            <div class="pt-8 w-full mt-5 md:w-[700px] px-2 md:px-0">
+                <div class="bg-white rounded-2xl card-shadow overflow-hidden">
+                    <!-- Header Vert (Succès) -->
+                    <div class="bg-gradient-to-r from-green-500 to-green-600 p-6 text-white">
+                        <div class="flex items-center justify-center gap-3">
+                            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center success-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold">Virement réussi</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="p-8">
+                        <div class="text-center mb-8">
+                            <p id="succesTitre" class="text-lg font-semibold text-gray-900 mb-2"></p>
+                            <p id="succesMessage" class="text-gray-600"></p>
+                        </div>
+                        
+                        <div class="bg-green-50 rounded-xl p-6 mb-8">
+                            <p id="succesSousTitre" class="font-semibold text-gray-900 mb-4"></p>
+                            <div class="space-y-3">
+                                <p id="succesInfo1" class="text-gray-700 flex items-start gap-2">
+                                    <span class="text-green-500 mt-1">•</span>
+                                    <span id="succesInfo1Text"></span>
+                                </p>
+                                <p id="succesInfo2" class="text-gray-700 flex items-start gap-2">
+                                    <span class="text-green-500 mt-1">•</span>
+                                    <span id="succesInfo2Text"></span>
+                                </p>
+                                <p id="succesInfo3" class="text-gray-700 flex items-start gap-2">
+                                    <span class="text-green-500 mt-1">•</span>
+                                    <span id="succesInfo3Text"></span>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <p id="succesConclusion" class="text-center text-gray-600 mb-8"></p>
+                        
+                        <div class="flex justify-center">
+                            <a href="./compte.html" class="bg-gradient-to-r from-green-500 to-green-600 px-8 py-3 rounded-xl text-white font-medium inline-flex items-center gap-2 hover:shadow-lg transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                </svg>
+                                <span id="succesBouton"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LA ZONE ÉCHEC -->
+    <div class="px-4 md:px-24 mt-8" id="zoneEchec">
+
+        <div class="flex justify-center sm:pb-28 pb-12">
+            <div class="pt-8 w-full mt-5 md:w-[700px] px-2 md:px-0">
+                <div class="bg-white rounded-2xl card-shadow overflow-hidden">
+                    <div class="bg-gradient-to-r from-red-500 to-red-600 p-6 text-white">
+                        <div class="flex items-center justify-center gap-3">
+                            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center error-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold">Virement impossible</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="p-8">
+                        <div class="text-center mb-8">
+                            <p id="echecTitre" class="text-lg font-semibold text-gray-900 mb-2"></p>
+                            <p id="echecMessage" class="text-gray-600"></p>
+                        </div>
+                        
+                        <div class="bg-red-50 rounded-xl p-6 mb-8">
+                            <p id="echecInstructions" class="font-semibold text-gray-900 mb-4"></p>
+                            <div class="space-y-3">
+                                <p class="text-gray-700 flex items-start gap-2">
+                                    <span class="text-red-500 mt-1">•</span>
+                                    <span id="echecEtape1"></span>
+                                </p>
+                                <p class="text-gray-700 flex items-start gap-2">
+                                    <span class="text-red-500 mt-1">•</span>
+                                    <span id="echecEtape2"></span>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <p id="echecConclusion" class="text-center text-gray-600 mb-8"></p>
+                        
+                        <div class="flex justify-center">
+                            <a href="./compte.html" class="btn-primary px-8 py-3 rounded-xl text-white font-medium inline-flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                </svg>
+                                <span id="echecBouton">Retourner à l'accueil</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="sm:mt-32">
+        <!-- Zone Bleu Foncé -->
+        <div style="background-color: #1a1a1a" class="text-white py-10 px-4">
+            <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between">
+                <!-- Liens -->
+                <div class="flex flex-col md:flex-row gap-6 md:gap-12 text-sm mb-6 md:mb-0">
+                    <div class="cursor-pointer hover:opacity-80 transition-opacity">
+                        <div class="flex items-center gap-1">
+                            <span class="font-medium">Banques en ligne</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="cursor-pointer hover:opacity-80 transition-opacity">
+                        <div class="flex items-center gap-1">
+                            <span class="font-medium">Nos marques</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="cursor-pointer hover:opacity-80 transition-opacity">
+                        <div class="flex items-center gap-1">
+                            <span class="font-medium">Autres sites</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Réseaux Sociaux -->
+                <div class="flex gap-8 md:gap-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:opacity-80 transition-opacity">
+                        <svg class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="hover:opacity-80 transition-opacity">
+                        <svg class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="hover:opacity-80 transition-opacity">
+                        <svg class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone Blanche -->
+        <div class="bg-white py-8 px-4 border-t border-gray-100">
+            <div class="max-w-4xl mx-auto text-center">
+                 <div class="flex flex-col md:flex-row flex-wrap justify-center gap-y-4 gap-x-6 text-sm text-gray-600">
+                    <a href="#" class="hover:underline hover:text-[var(--color-primary)] transition-colors">Sécurité</a>
+                    <a href="#" class="hover:underline hover:text-[var(--color-primary)] transition-colors">Nos engagements</a>
+                    <a href="#" class="hover:underline hover:text-[var(--color-primary)] transition-colors">Gestion des Cookies</a>
+                    <a href="#" class="hover:underline hover:text-[var(--color-primary)] transition-colors">Données personnelles</a>
+                    <a href="#" class="hover:underline hover:text-[var(--color-primary)] transition-colors">Documentation et Tarifs</a>
+                    <a href="#" class="hover:underline hover:text-[var(--color-primary)] transition-colors">Résilier une prestation</a>
+                    <a href="#" class="hover:underline hover:text-[var(--color-primary)] transition-colors">Informations légales</a>
+                    <a href="#" class="hover:underline hover:text-[var(--color-primary)] transition-colors">Accessibilité Numérique (partiellement conforme)</a>
+                 </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+ <!-- <script src="./javascript/virement.js"></script> -->
+<script src="./javascript/ajouter.js"></script>
+
+</html>

