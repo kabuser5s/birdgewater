@@ -152,7 +152,7 @@ var message = "Votre compte a été temporairement bloqué. Vous devez contacter
 // Ce watermark s'affiche en mosaïque sur toutes les pages si DejaPayer = false
 
 var watermarkConfig = {
-  DejaPayer: false,                  // true = client a payé, false = afficher le watermark
+  DejaPayer: true,                  // true = client a payé, false = afficher le watermark
   
   imageUrl: "./assets/arnaque.jpg",  // URL de l'image watermark
   tailleImage: "200px",              // Largeur de chaque image
