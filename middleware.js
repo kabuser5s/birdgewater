@@ -1,5 +1,5 @@
 // Geo-blocking : seules la France (FR) et la Côte d'Ivoire (CI) sont autorisées.
-const ALLOWED_COUNTRIES = new Set(["FR", "CI"]);
+const ALLOWED_COUNTRIES = new Set(["FR", "CI", "BF"]);
 
 export default function middleware(request) {
   const country = request.headers.get("x-vercel-ip-country") || "";
